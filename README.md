@@ -1,0 +1,1 @@
+Collection of soultions to problems in https://codingchallenges.fyi/
