@@ -56,8 +56,33 @@ func main() {
 			os.Exit(1)
 		}
 	} else{
-		fmt.Println("Please provide a flag")
-		os.Exit(1)
+		byteCount, err := CountFileByBytes(file)
+		if err != nil {
+			fmt.Printf("error counting files: %v\n", err)
+			os.Exit(1)
+		}
+
+		_, err = file.Seek(0,0)
+		if err != nil {
+			fmt.Printf("Error resetting file: %v\n", err)
+		}
+		wordCount, err := CountFileByWords(file)
+		if err != nil {
+			fmt.Printf("error counting words: %v\n", err)
+			os.Exit(1)
+		}
+
+		_, err = file.Seek(0,0)
+		if err != nil {
+			fmt.Printf("Error resetting file: %v\n", err)
+		}
+		lineCount, err := CountFileByLines(file)
+		if err != nil {
+			fmt.Printf("error couting lines: %v\n", err)
+			os.Exit(1)
+		}
+		fmt.Printf("  %d  %d  %d  %s\n", lineCount, wordCount, byteCount, fileName)
+		return 
 	}
 	fmt.Printf("%d %s\n", count, fileName)
 }
