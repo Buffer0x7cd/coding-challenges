@@ -11,6 +11,14 @@ import (
 // >ccwc -c test.txt
 //   342190 test.txt
 
+type ScanMode int
+
+const (
+	ScanModeBytes ScanMode = iota
+	ScanModeWords
+	ScanModeLines
+)
+
 func main() {
 	// Parse the command line arguments
 	countBytes := flag.Bool("c", false, "Count the number of bytes in file")
@@ -88,38 +96,30 @@ func main() {
 }
 
 func CountFileByBytes(r io.Reader) (int, error) {
-	scanner := bufio.NewScanner(r)
-	scanner.Split(bufio.ScanBytes)
-
-	count := 0
-	for scanner.Scan() {
-		count++
-	}
-	if scanner.Err() != nil {
-		return 0, scanner.Err()
-	}
-	return count, nil
+	return CountFileByMode(r, ScanModeBytes)
 }
 
 func CountFileByWords(r io.Reader) (int, error) {
-	scanner := bufio.NewScanner(r)
-	scanner.Split(bufio.ScanWords)
-
-	count := 0
-	for scanner.Scan() {
-		count++
-	}
-	if scanner.Err() != nil {
-		return 0, scanner.Err()
-	}
-	return count, nil
+	return CountFileByMode(r, ScanModeWords)
 }
 
 func CountFileByLines(r io.Reader) (int, error) {
-	scanner := bufio.NewScanner(r)
-	scanner.Split(bufio.ScanLines)
+	return CountFileByMode(r, ScanModeLines)
+}
 
+
+func CountFileByMode(r io.Reader, mode ScanMode) (int, error){
 	count := 0
+	scanner := bufio.NewScanner(r)
+	switch mode {
+	case ScanModeBytes:
+		scanner.Split(bufio.ScanBytes)
+	case ScanModeWords:
+		scanner.Split(bufio.ScanWords)
+	default:
+		scanner.Split(bufio.ScanLines)
+	}
+
 	for scanner.Scan() {
 		count++
 	}
